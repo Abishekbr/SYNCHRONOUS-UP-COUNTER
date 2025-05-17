@@ -30,17 +30,91 @@ However, the remaining flip-flops should be made ready to toggle only when all l
 
 /* write all the steps invloved */
 
+1.Initialize the shift register to a known state (e.g., all zeros).
+
+2.Input a bit serially into the shift register.
+
+3.Shift the contents of the register one position to the right (or left).
+
+4.Output the shifted bit from the last stage of the register.
+
+5.Repeat steps 2-4 for each bit you want to input and shift. /* write all the steps invloved
+
+
 **PROGRAM**
 
 /* Program for flipflops and verify its truth table in quartus using Verilog programming. 
 
-Developed by: RegisterNumber:
+Developed by: B.R.ABISHEK  RegisterNumber:212224110002
 */
+```
+module exp11 (
+    input clk,    // Clock signal
+    input rst,    // Reset signal (active high)
+    output [3:0] q // 4-bit output
+);
 
+    wire [3:0] j, k; // J and K inputs for each JK flip-flop
+    wire [3:0] t;    // Toggle signal for each flip-flop
+
+    // Generate the toggle signals for each stage
+    assign j[0] = 1'b1; // First flip-flop toggles on every clock pulse
+    assign k[0] = 1'b1;
+    assign t[0] = q[0]; // Output of the first flip-flop
+
+    assign j[1] = q[0]; // Second flip-flop toggles on q[0] high
+    assign k[1] = q[0];
+    assign t[1] = q[1];
+
+    assign j[2] = q[0] & q[1]; // Third flip-flop toggles on q[1:0] high
+    assign k[2] = q[0] & q[1];
+    assign t[2] = q[2];
+
+    assign j[3] = q[0] & q[1] & q[2]; // Fourth flip-flop toggles on q[2:0] high
+    assign k[3] = q[0] & q[1] & q[2];
+    assign t[3] = q[3];
+
+    // Instantiate 4 JK flip-flops
+    jk_flipflop jk0 (.clk(clk), .rst(rst), .j(j[0]), .k(k[0]), .q(q[0]));
+    jk_flipflop jk1 (.clk(clk), .rst(rst), .j(j[1]), .k(k[1]), .q(q[1]));
+    jk_flipflop jk2 (.clk(clk), .rst(rst), .j(j[2]), .k(k[2]), .q(q[2]));
+    jk_flipflop jk3 (.clk(clk), .rst(rst), .j(j[3]), .k(k[3]), .q(q[3]));
+
+endmodule
+
+// JK flip-flop module
+module jk_flipflop (
+    input clk,    // Clock signal
+    input rst,    // Reset signal (active high)
+    input j,      // J input
+    input k,      // K input
+    output reg q  // Q output
+);
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            q <= 1'b0; // Reset output to 0
+        end else begin
+            case ({j, k})
+                2'b00: q <= q;       // No change
+                2'b01: q <= 1'b0;    // Reset
+                2'b10: q <= 1'b1;    // Set
+                2'b11: q <= ~q;      // Toggle
+            endcase
+        end
+    end
+endmodule
+```
 **RTL LOGIC UP COUNTER**
+![image](https://github.com/user-attachments/assets/2476a426-35ba-4bfe-b0db-970546a21363)
+
 
 **TIMING DIAGRAM FOR IP COUNTER**
+![image](https://github.com/user-attachments/assets/a676df50-be14-4612-a77d-3a15acbff113)
+
 
 **TRUTH TABLE**
+![image](https://github.com/user-attachments/assets/30d3ae25-1626-457c-9989-6e9898220a56)
+
 
 **RESULTS**
+Thus the program executed successfully
